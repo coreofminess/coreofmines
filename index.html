@@ -336,22 +336,6 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 }
 </style>
 
-
-<style id="coreofmines-login-modal">
-.login-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
-.login-modal-backdrop.show{display:flex}
-.login-modal{width:min(420px,100%);background:#10171d;border:1px solid #2d3944;border-radius:22px;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.55);position:relative}
-.login-close{position:absolute;right:15px;top:12px;width:36px;height:36px;border:0;background:transparent;color:#aeb8c8;font-size:28px;cursor:pointer}
-.login-modal h3{margin:0 30px 7px 0;font-family:"Playfair Display",serif;font-size:28px;color:#fff}
-.login-modal .login-sub{margin:0 0 22px;color:#aeb8c8;font-size:14px;line-height:1.5}
-.login-form{display:grid;gap:12px}.login-form input{width:100%;padding:13px 14px;border-radius:11px;border:1px solid #34414d;background:#0a1015;color:#fff;outline:none}.login-form input:focus{border-color:#f3bd4e}
-.login-primary{width:100%;padding:13px;border:0;border-radius:11px;background:#f3bd4e;color:#111;font-weight:700;cursor:pointer;margin-top:2px}
-.login-switch{margin-top:17px;text-align:center;color:#aeb8c8;font-size:13px}.login-switch button{border:0;background:none;color:#f3bd4e;cursor:pointer;font-weight:700}
-.login-message{min-height:20px;margin-top:10px;font-size:13px;text-align:center;color:#f3bd4e}
-.login-user-state{display:none}.login-user-state.show{display:block}.login-form-wrap.hide{display:none}
-.login-logout{width:100%;padding:12px;border:1px solid #394651;border-radius:11px;background:transparent;color:#fff;cursor:pointer}
-@media(max-width:430px){.login-modal{padding:24px 18px;border-radius:18px}.login-modal h3{font-size:25px}}
-</style>
 </head>
 <body>
 <header><div class="container nav">
@@ -360,32 +344,6 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 <a href="#menu" aria-label="Menu"><svg class="menu" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h24M2 12h24M2 21h24"/></svg></a>
 <a class="login-btn profile-btn" href="#login" aria-label="Login or Sign Up" title="Login / Sign Up"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACq0lEQVR42u3di3XDMAxD0Uin+6+crtCPYsPEfQPUFQGRjPXx6wUAAAAAAABgPqtpsO/3+/3jwKy1GKBM9EYzLKJ3m2ERvtsIm/jPeB4DBIoxwQSL8N0lYRO/Oxts4nebYBO/2wRfrzJ+UqundPjjmsD/CPOXJu3q5zHAB8Q4IcSdz2aAPwrwieCn/B9+Bt4U9ImLQnva7P+0SL/9++kN5TbzuzPByBKAIQZI3sHzm+cllwEZQAZQ+5t7gVgDTHsdmzqebfZ3ZwE9gB4ADAAGAAOAAcAAYAAwwGO4+w3b099Yxhpg3Cnc0PE4G1g8+/UAyDZA8qaLKdfNyAAywByuygKT9irEGyBtG3baNnUZ4EITTDw06mxg+LMZ4NAMdDp4gAFOpOEr7gd40lvMugsimi5/GNkEps+up61hPPJXQGqQn7iA9difgWnBfurq5Ygl1zvruoMhxbPP2cBiE0zZsOJ7AaXCjzbAaTP4YkihGVq+GQQAAIBCojvdSUu3sQtYRO82wyJ6txkW4buNsInfXfo28btNsAjfXRI28buzwSZ+twk28btNEH8wZMK6fPIkWKkDn7ghIzEeK22wDTtxkmKzUgbYuAUrIU4R28Jb998ljHvf7er2zZd3X4GzzfzuTOCauHKOGsC++2uywMkyIAPIAGp/cy9wzADe+ee/Q4jIAGZ/Vnz0AHoAMAAYAAwABgADgAHAAGAAMAAY4DQWjbLic8wAFnmu5VS8HQ8vnv16AJw1QPLHnifN/pPlVgaQAbpqntr/YQOkfex5mvgjzwa2miBh3I6HP0j4xxwPP+FwF0RcE4+VPOgpRkiOwdf04OHmJtAaQXb89oRBEP8BPwOZIDNet4iirudMFMfDi8W/zQBMkBMPn4wpFT7KAG1m8NGoQjMoeQAAIIlvZvGYzJ3dqigAAAAASUVORK5CYII=" alt="Profile"></a>
 </nav></div></header>
-
-
-<div class="login-modal-backdrop" id="loginModal" aria-hidden="true">
-  <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-    <button class="login-close" id="loginClose" aria-label="Close">×</button>
-    <div class="login-form-wrap" id="loginFormWrap">
-      <h3 id="loginTitle">Login to Read</h3>
-      <p class="login-sub" id="loginSubtitle">Please login or create an account to read books on CoreOfMines.</p>
-      <form class="login-form" id="authForm">
-        <input id="authEmail" type="email" placeholder="Email address" autocomplete="email" required>
-        <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
-        <button class="login-primary" id="authSubmit" type="submit">Login</button>
-      </form>
-      <div class="login-message" id="authMessage"></div>
-      <div class="login-switch" id="authSwitch">Don't have an account? <button type="button" id="switchAuth">Sign Up</button></div>
-    </div>
-    <div class="login-user-state" id="userState">
-      <h3>You're logged in</h3>
-      <p class="login-sub" id="userEmail"></p>
-      <button class="login-primary" id="continueRead" type="button">Continue Reading</button>
-      <div style="height:10px"></div>
-      <button class="login-logout" id="logoutBtn" type="button">Log Out</button>
-      <div class="login-message" id="userMessage"></div>
-    </div>
-  </div>
-</div>
 
 <main id="home">
 <section class="hero"><div class="container hero-content">
@@ -492,14 +450,6 @@ function renderBooks(books){
     read.target = "_blank";
     read.rel = "noopener";
     read.textContent = "▣  Read Now";
-    read.addEventListener("click", async (event) => {
-      if(!book.pdf_url) return;
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if(!session){
-        event.preventDefault();
-        openLoginModal(book.pdf_url);
-      }
-    });
 
     card.append(cover, title, author, desc, read);
     grid.appendChild(card);
@@ -556,99 +506,6 @@ async function loadBooks(){
     applyFilter();
   }
 }
-
-const loginModal = document.getElementById("loginModal");
-const loginClose = document.getElementById("loginClose");
-const authForm = document.getElementById("authForm");
-const authEmail = document.getElementById("authEmail");
-const authPassword = document.getElementById("authPassword");
-const authSubmit = document.getElementById("authSubmit");
-const authMessage = document.getElementById("authMessage");
-const switchAuth = document.getElementById("switchAuth");
-const authSwitch = document.getElementById("authSwitch");
-const loginTitle = document.getElementById("loginTitle");
-const loginSubtitle = document.getElementById("loginSubtitle");
-const loginFormWrap = document.getElementById("loginFormWrap");
-const userState = document.getElementById("userState");
-const userEmail = document.getElementById("userEmail");
-const continueRead = document.getElementById("continueRead");
-const logoutBtn = document.getElementById("logoutBtn");
-const userMessage = document.getElementById("userMessage");
-let authMode = "login", pendingReadUrl = null;
-
-function openLoginModal(url=null){
-  pendingReadUrl = url;
-  loginModal.classList.add("show");
-  loginModal.setAttribute("aria-hidden","false");
-  showAuthForm("login");
-}
-function closeLoginModal(){
-  loginModal.classList.remove("show");
-  loginModal.setAttribute("aria-hidden","true");
-  authMessage.textContent=""; userMessage.textContent="";
-}
-function showAuthForm(mode){
-  authMode=mode; loginFormWrap.classList.remove("hide"); userState.classList.remove("show");
-  loginTitle.textContent=mode==="login"?"Login to Read":"Create Your Account";
-  loginSubtitle.textContent=mode==="login"?"Please login or create an account to read books on CoreOfMines.":"Create a free account to read books on CoreOfMines.";
-  authSubmit.textContent=mode==="login"?"Login":"Sign Up";
-  authPassword.autocomplete=mode==="login"?"current-password":"new-password";
-  authSwitch.innerHTML=mode==="login"?"Don't have an account? <button type="button" id="switchAuth">Sign Up</button>":"Already have an account? <button type="button" id="switchAuth">Login</button>";
-  document.getElementById("switchAuth").addEventListener("click",()=>showAuthForm(mode==="login"?"signup":"login"));
-  setTimeout(()=>authEmail.focus(),50);
-}
-async function continueToBook(){
-  if(pendingReadUrl){ const url=pendingReadUrl; pendingReadUrl=null; closeLoginModal(); window.open(url,"_blank","noopener"); }
-}
-loginClose.addEventListener("click",closeLoginModal);
-loginModal.addEventListener("click",e=>{if(e.target===loginModal)closeLoginModal()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeLoginModal()});
-
-authForm.addEventListener("submit",async e=>{
-  e.preventDefault(); authMessage.textContent=""; authSubmit.disabled=true;
-  const email=authEmail.value.trim(), password=authPassword.value;
-  try{
-    if(authMode==="login"){
-      const {error}=await supabaseClient.auth.signInWithPassword({email,password});
-      if(error) throw error;
-      await updateAuthState();
-      if(pendingReadUrl) continueToBook();
-    }else{
-      const {data,error}=await supabaseClient.auth.signUp({email,password});
-      if(error) throw error;
-      if(data.session){ await updateAuthState(); if(pendingReadUrl) continueToBook(); }
-      else { authMessage.textContent="Account created. Check your email to verify, then login."; showAuthForm("login"); }
-    }
-  }catch(err){ authMessage.textContent=err.message||"Something went wrong. Please try again."; }
-  finally{authSubmit.disabled=false;}
-});
-
-async function updateAuthState(){
-  if(!supabaseClient) return;
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  const loggedIn=!!session;
-  if(loggedIn){
-    userEmail.textContent=session.user.email||"";
-    loginFormWrap.classList.add("hide"); userState.classList.add("show");
-  }else{ showAuthForm("login"); }
-}
-continueRead.addEventListener("click",continueToBook);
-logoutBtn.addEventListener("click",async()=>{await supabaseClient.auth.signOut(); pendingReadUrl=null; showAuthForm("login"); userMessage.textContent="Logged out.";});
-
-// Demo/static books use the same login gate.
-document.querySelectorAll(".read").forEach(link=>{
-  if(link.dataset.authGateBound) return; link.dataset.authGateBound="1";
-  link.addEventListener("click",async event=>{
-    if(!supabaseClient) return;
-    const {data:{session}}=await supabaseClient.auth.getSession();
-    if(!session){ event.preventDefault(); openLoginModal(link.href); }
-  });
-});
-
-if(supabaseClient){ supabaseClient.auth.onAuthStateChange(()=>updateAuthState()); }
-
-const profileBtn=document.querySelector(".profile-btn");
-if(profileBtn){ profileBtn.addEventListener("click",async e=>{ e.preventDefault(); openLoginModal(); await updateAuthState(); }); }
 
 loadBooks();
 </script>
