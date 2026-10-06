@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#080d11">
+<title>CoreOfMines — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#080d11;--panel:#0c1319;--gold:#f3bd4e;--white:#f7f3ed;--muted:#aeb8c8;--line:#26313b;--danger:#e76f51}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:"DM Sans",sans-serif}
+.container{width:min(760px,calc(100% - 32px));margin:auto}
+header{border-bottom:1px solid var(--line);padding:22px 0}.brand{font-family:"Bebas Neue";font-size:42px;letter-spacing:1px}.sub{color:var(--muted);font-size:12px;letter-spacing:2px}
+main{padding:35px 0 70px}h1{font-family:"Playfair Display";font-size:34px;margin:0 0 8px}.lead{color:var(--muted);margin:0 0 25px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:18px}
+label{display:block;font-size:13px;color:var(--muted);margin:16px 0 7px}
+input,textarea,select{width:100%;border:1px solid #34414c;background:#091016;color:var(--white);border-radius:10px;padding:13px;font:inherit;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}textarea{min-height:120px;resize:vertical}
+button{border:0;border-radius:10px;padding:13px 18px;background:var(--gold);color:#17120a;font-weight:700;cursor:pointer;margin-top:18px}
+button.secondary{background:transparent;border:1px solid var(--line);color:var(--white)}
+button:disabled{opacity:.55;cursor:not-allowed}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.hint{font-size:12px;color:#8995a5;margin-top:6px}
+.msg{margin-top:15px;padding:12px;border-radius:10px;background:#101a21;color:var(--muted);display:none}.msg.show{display:block}
+.msg.error{border:1px solid rgba(231,111,81,.45);color:#ffb4a2}.msg.ok{border:1px solid rgba(243,189,78,.4);color:var(--gold)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}.user{font-size:12px;color:var(--muted)}
+.hidden{display:none!important}.back{color:var(--gold);text-decoration:none;font-size:13px}
+@media(max-width:600px){.row{grid-template-columns:1fr}.panel{padding:18px}h1{font-size:29px}.brand{font-size:36px}}
+</style>
+</head>
+<body>
+<header><div class="container topbar"><div><div class="brand">COREFOMINES</div><div class="sub">SOME STORIES BY DEEPAK • ADMIN</div></div><a class="back" href="./">← Website</a></div></header>
+
+<main class="container">
+<h1>Book Manager</h1>
+<p class="lead">Upload a cover + PDF, add the book details, and publish it to your CoreOfMines library.</p>
+
+<section id="loginPanel" class="panel">
+<h2>Admin Login</h2>
+<p class="lead">Use your Supabase Auth email and password.</p>
+<label>Email</label>
+<input id="email" type="email" value="coreofmines@gmail.com" autocomplete="email">
+<label>Password</label>
+<input id="password" type="password" autocomplete="current-password">
+<button id="loginBtn">Login</button>
+<div id="loginMsg" class="msg"></div>
+</section>
+
+<section id="adminPanel" class="panel hidden">
+<div class="topbar">
+  <div><h2 style="margin:0">Add New Book</h2><div id="userInfo" class="user"></div></div>
+  <button id="logoutBtn" class="secondary" type="button">Logout</button>
+</div>
+
+<form id="bookForm">
+<div class="row">
+  <div><label>Book Title *</label><input id="title" required placeholder="The Hope - Finding"></div>
+  <div><label>Author *</label><input id="author" required value="Deepak Goswami" placeholder="Deepak Goswami"></div>
+</div>
+
+<label>Description</label>
+<textarea id="description" placeholder="A short description of the book..."></textarea>
+
+<label>Category *</label>
+<select id="category" required>
+<option value="self-help">Self Help</option>
+<option value="fiction">Fiction</option>
+<option value="non-fiction">Non-Fiction</option>
+<option value="mystery">Mystery</option>
+<option value="philosophy">Philosophy</option>
+<option value="other">Other</option>
+</select>
+
+<div class="row">
+  <div><label>Book Cover *</label><input id="cover" type="file" accept="image/*" required><div class="hint">Upload JPG/PNG/WebP cover.</div></div>
+  <div><label>Book PDF *</label><input id="pdf" type="file" accept="application/pdf,.pdf" required><div class="hint">Upload the complete book PDF.</div></div>
+</div>
+
+<button id="publishBtn" type="submit">Publish Book</button>
+<div id="bookMsg" class="msg"></div>
+</form>
+</section>
+
+<section id="configPanel" class="panel">
+<strong>One-time setup</strong>
+<p class="lead" style="margin-top:8px">Supabase is connected. Never use an <b>sb_secret_</b> key in this page.</p>
+</section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://zahjakqbxeatksxjjson.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_rDCNjlHoljPz327epnRJnw_lft8X5fv";
+const supabaseReady = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_");
+const supabaseClient = supabaseReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY) : null;
+
+const loginPanel=document.getElementById("loginPanel");
+const adminPanel=document.getElementById("adminPanel");
+const loginMsg=document.getElementById("loginMsg");
+const bookMsg=document.getElementById("bookMsg");
+const publishBtn=document.getElementById("publishBtn");
+
+function message(el,text,error=false){
+  el.textContent=text; el.className="msg show "+(error?"error":"ok");
+}
+function safeName(name){
+  return name.toLowerCase().replace(/[^a-z0-9._-]+/g,"-").replace(/-+/g,"-");
+}
+
+async function showSession(){
+  if(!supabaseReady){
+    message(loginMsg,"Supabase Project URL is not configured yet.",true);
+    return;
+  }
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(session){
+    loginPanel.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    document.getElementById("userInfo").textContent=session.user.email||"Signed in";
+  }else{
+    loginPanel.classList.remove("hidden");
+    adminPanel.classList.add("hidden");
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click",async()=>{
+  if(!supabaseReady){message(loginMsg,"First add your Supabase Project URL in this file.",true);return;}
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  message(loginMsg,"Logging in…");
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){message(loginMsg,error.message,true);return;}
+  message(loginMsg,"Login successful.");
+  await showSession();
+});
+
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut(); await showSession();
+});
+
+document.getElementById("bookForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!supabaseClient){message(bookMsg,"Supabase is not configured.",true);return;}
+
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){message(bookMsg,"Please login first.",true);return;}
+
+  const coverFile=document.getElementById("cover").files[0];
+  const pdfFile=document.getElementById("pdf").files[0];
+  if(!coverFile||!pdfFile){message(bookMsg,"Please select both cover and PDF.",true);return;}
+  if(pdfFile.type && pdfFile.type!=="application/pdf" && !pdfFile.name.toLowerCase().endsWith(".pdf")){
+    message(bookMsg,"Please select a PDF file.",true);return;
+  }
+
+  publishBtn.disabled=true;
+  publishBtn.textContent="Publishing…";
+  message(bookMsg,"Uploading cover and PDF…");
+
+  const id=crypto.randomUUID();
+  const coverPath=id+"-"+safeName(coverFile.name);
+  const pdfPath=id+"-"+safeName(pdfFile.name);
+
+  const coverUpload=await supabaseClient.storage.from("covers").upload(coverPath,coverFile,{upsert:false,contentType:coverFile.type||"image/jpeg"});
+  if(coverUpload.error){publishBtn.disabled=false;publishBtn.textContent="Publish Book";message(bookMsg,"Cover upload failed: "+coverUpload.error.message,true);return;}
+
+  const pdfUpload=await supabaseClient.storage.from("books").upload(pdfPath,pdfFile,{upsert:false,contentType:"application/pdf"});
+  if(pdfUpload.error){
+    await supabaseClient.storage.from("covers").remove([coverPath]);
+    publishBtn.disabled=false;publishBtn.textContent="Publish Book";
+    message(bookMsg,"PDF upload failed: "+pdfUpload.error.message,true);return;
+  }
+
+  const {data:coverData}=supabaseClient.storage.from("covers").getPublicUrl(coverPath);
+  const {data:pdfData}=supabaseClient.storage.from("books").getPublicUrl(pdfPath);
+
+  const payload={
+    id,
+    title:document.getElementById("title").value.trim(),
+    author:document.getElementById("author").value.trim(),
+    description:document.getElementById("description").value.trim(),
+    category:document.getElementById("category").value,
+    cover_url:coverData.publicUrl,
+    pdf_url:pdfData.publicUrl,
+    published:true
+  };
+
+  const {error}=await supabaseClient.from("books").insert(payload);
+  if(error){
+    await supabaseClient.storage.from("covers").remove([coverPath]);
+    await supabaseClient.storage.from("books").remove([pdfPath]);
+    publishBtn.disabled=false;publishBtn.textContent="Publish Book";
+    message(bookMsg,"Database save failed: "+error.message,true);return;
+  }
+
+  document.getElementById("bookForm").reset();
+  document.getElementById("author").value="Deepak Goswami";
+  document.getElementById("category").value="self-help";
+  publishBtn.disabled=false;publishBtn.textContent="Publish Book";
+  message(bookMsg,"✓ Book published successfully. Open the website and refresh to see it.");
+});
+
+showSession();
+</script>
+</body>
+</html>
