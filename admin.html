@@ -28,6 +28,16 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}.user{font-size:12px;color:var(--muted)}
 .hidden{display:none!important}.back{color:var(--gold);text-decoration:none;font-size:13px}
 @media(max-width:600px){.row{grid-template-columns:1fr}.panel{padding:18px}h1{font-size:29px}.brand{font-size:36px}}
+.book-list{display:grid;gap:12px;margin-top:16px}
+.book-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#091016}
+.book-meta{min-width:0}
+.book-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book-author{font-size:12px;color:var(--muted);margin-top:4px}
+.delete-btn{margin:0;background:transparent;border:1px solid rgba(231,111,81,.65);color:#ffb4a2;padding:9px 12px;border-radius:9px;white-space:nowrap}
+.delete-btn:hover{background:rgba(231,111,81,.10)}
+.list-empty{color:var(--muted);font-size:13px;padding:10px 0}
+@media(max-width:600px){.book-item{align-items:flex-start}.delete-btn{padding:8px 10px;font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -81,6 +91,16 @@ button:disabled{opacity:.55;cursor:not-allowed}
 <button id="publishBtn" type="submit">Publish Book</button>
 <div id="bookMsg" class="msg"></div>
 </form>
+
+</section>
+
+<section id="managePanel" class="panel hidden">
+  <div class="topbar">
+    <div><h2 style="margin:0">Manage Books</h2><div class="user">Delete a duplicate or unwanted book.</div></div>
+    <button id="refreshBooksBtn" class="secondary" type="button">Refresh</button>
+  </div>
+  <div id="bookList" class="book-list"></div>
+  <div id="manageMsg" class="msg"></div>
 </section>
 
 <section id="configPanel" class="panel">
@@ -100,6 +120,10 @@ const adminPanel=document.getElementById("adminPanel");
 const loginMsg=document.getElementById("loginMsg");
 const bookMsg=document.getElementById("bookMsg");
 const publishBtn=document.getElementById("publishBtn");
+const managePanel=document.getElementById("managePanel");
+const bookList=document.getElementById("bookList");
+const manageMsg=document.getElementById("manageMsg");
+const refreshBooksBtn=document.getElementById("refreshBooksBtn");
 
 function message(el,text,error=false){
   el.textContent=text; el.className="msg show "+(error?"error":"ok");
@@ -123,6 +147,78 @@ async function showSession(){
     adminPanel.classList.add("hidden");
   }
 }
+
+
+async function loadBooks(){
+  if(!supabaseClient) return;
+  bookList.innerHTML='<div class="list-empty">Loading books…</div>';
+  const {data,error}=await supabaseClient.from("books").select("id,title,author,cover_url,pdf_url").order("title",{ascending:true});
+  if(error){message(manageMsg,"Could not load books: "+error.message,true);return;}
+  if(!data||!data.length){
+    bookList.innerHTML='<div class="list-empty">No books found.</div>';
+    return;
+  }
+  bookList.innerHTML="";
+  data.forEach(book=>{
+    const item=document.createElement("div");
+    item.className="book-item";
+    const meta=document.createElement("div");
+    meta.className="book-meta";
+    const name=document.createElement("div");
+    name.className="book-name";
+    name.textContent=book.title||"Untitled";
+    const author=document.createElement("div");
+    author.className="book-author";
+    author.textContent=book.author||"";
+    meta.append(name,author);
+
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="delete-btn";
+    btn.textContent="Delete 🗑️";
+    btn.addEventListener("click",()=>deleteBook(book,btn));
+
+    item.append(meta,btn);
+    bookList.appendChild(item);
+  });
+}
+
+function storagePathFromPublicUrl(url,bucket){
+  if(!url) return null;
+  const marker="/storage/v1/object/public/"+bucket+"/";
+  const i=url.indexOf(marker);
+  return i>=0 ? decodeURIComponent(url.slice(i+marker.length)) : null;
+}
+
+async function deleteBook(book,btn){
+  if(!confirm('Delete "'+(book.title||"this book")+'"?\\n\\nThis will remove the book from the library and delete its cover/PDF from storage.')) return;
+  btn.disabled=true;
+  btn.textContent="Deleting…";
+  message(manageMsg,"Deleting "+(book.title||"book")+"…");
+
+  const coverPath=storagePathFromPublicUrl(book.cover_url,"covers");
+  const pdfPath=storagePathFromPublicUrl(book.pdf_url,"books");
+
+  if(coverPath){
+    const r=await supabaseClient.storage.from("covers").remove([coverPath]);
+    if(r.error){btn.disabled=false;btn.textContent="Delete 🗑️";message(manageMsg,"Cover delete failed: "+r.error.message,true);return;}
+  }
+  if(pdfPath){
+    const r=await supabaseClient.storage.from("books").remove([pdfPath]);
+    if(r.error){btn.disabled=false;btn.textContent="Delete 🗑️";message(manageMsg,"PDF delete failed: "+r.error.message,true);return;}
+  }
+
+  const {error}=await supabaseClient.from("books").delete().eq("id",book.id);
+  if(error){
+    btn.disabled=false;btn.textContent="Delete 🗑️";
+    message(manageMsg,"Database delete failed: "+error.message,true);
+    return;
+  }
+  message(manageMsg,"✓ Book deleted successfully.");
+  await loadBooks();
+}
+
+refreshBooksBtn.addEventListener("click",loadBooks);
 
 document.getElementById("loginBtn").addEventListener("click",async()=>{
   if(!supabaseReady){message(loginMsg,"First add your Supabase Project URL in this file.",true);return;}
