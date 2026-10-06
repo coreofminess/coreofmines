@@ -248,15 +248,65 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 }
 </style>
 
+
+<style id="coreofmines-final-header-v2">
+.profile-btn{display:flex!important;align-items:center!important;justify-content:center!important;width:46px!important;height:46px!important;min-width:46px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.profile-btn img{width:30px!important;height:30px!important;object-fit:contain!important;display:block!important}
+@media(max-width:850px){
+ header{height:100px!important;min-height:100px!important}
+ header .container.nav{width:calc(100% - 30px)!important;height:100px!important;display:flex!important;align-items:center!important;gap:0!important}
+ .logo-wrap{flex:1 1 auto!important;min-width:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;overflow:visible!important}
+ .logo{font-size:36px!important;line-height:.92!important;letter-spacing:.3px!important;white-space:nowrap!important}
+ .logo-sub{display:block!important;font-size:7px!important;line-height:1!important;letter-spacing:2.15px!important;margin:3px 0 0 2px!important;white-space:nowrap!important}
+ .nav-links{flex:0 0 auto!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important}
+ .nav-links>a{display:flex!important;align-items:center!important;justify-content:center!important}
+ .nav-links>a:nth-child(1){width:44px!important;height:100%!important;order:1!important}
+ .nav-links>a:nth-child(1) .menu{width:31px!important;height:27px!important;display:block!important}
+ .profile-btn{order:0!important;width:44px!important;height:100%!important;min-width:44px!important}
+ .profile-btn img{width:31px!important;height:31px!important}
+ .hero-content{padding-top:28px!important}
+ .top-search{margin-bottom:38px!important}
+ .hero h1{font-size:30px!important;line-height:1.06!important;white-space:nowrap!important;letter-spacing:-1px!important}
+ .hero-copy{font-size:14px!important;line-height:1.55!important;max-width:100%!important}
+ .hero-actions{display:flex!important;align-items:center!important;gap:16px!important;flex-wrap:nowrap!important;margin-top:4px!important}
+ .hero-actions .cta{flex:0 1 auto!important}
+ .social-links{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:8px!important}
+ .social-links a{width:42px!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+ .social-links svg{width:29px!important;height:29px!important;display:block!important}
+}
+@media(max-width:430px){
+ header .container.nav{width:calc(100% - 24px)!important}
+ .logo{font-size:34px!important}
+ .logo-sub{font-size:6.5px!important;letter-spacing:1.9px!important;margin-top:2px!important}
+ .nav-links{gap:5px!important}
+ .profile-btn,.nav-links>a:nth-child(1){width:39px!important;min-width:39px!important}
+ .profile-btn img{width:28px!important;height:28px!important}
+ .nav-links>a:nth-child(1) .menu{width:29px!important;height:25px!important}
+ .hero-actions{gap:12px!important}
+ .social-links{gap:4px!important}
+ .social-links a{width:38px!important;height:46px!important}
+ .social-links svg{width:27px!important;height:27px!important}
+}
+@media(max-width:390px){
+ .logo{font-size:31px!important}
+ .logo-sub{font-size:6px!important;letter-spacing:1.7px!important}
+ .profile-btn,.nav-links>a:nth-child(1){width:36px!important;min-width:36px!important}
+ .profile-btn img{width:26px!important;height:26px!important}
+ .nav-links>a:nth-child(1) .menu{width:27px!important;height:24px!important}
+ .hero h1{font-size:27px!important}
+ .hero-actions{gap:8px!important}
+ .social-links a{width:35px!important}
+ .social-links svg{width:25px!important;height:25px!important}
+}
+</style>
+
 </head>
 <body>
 <header><div class="container nav">
 <a href="#" class="logo-wrap"><div class="logo">COREOFMINES</div><div class="logo-sub">SOME STORIES BY DEEPAK</div></a>
 <nav class="nav-links">
-<a class="active" href="#home" aria-label="Home"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 19.5v-9Z"/></svg><span class="home-text">Home</span></a>
-<a href="#search" aria-label="Search"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></a>
 <a href="#menu" aria-label="Menu"><svg class="menu" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h24M2 12h24M2 21h24"/></svg></a>
-<a class="login-btn" href="#login" aria-label="Login or Sign Up"><span class="user-dot">●</span><span>Login / Sign Up</span></a>
+<a class="login-btn profile-btn" href="#login" aria-label="Login or Sign Up" title="Login / Sign Up"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACq0lEQVR42u3di3XDMAxD0Uin+6+crtCPYsPEfQPUFQGRjPXx6wUAAAAAAABgPqtpsO/3+/3jwKy1GKBM9EYzLKJ3m2ERvtsIm/jPeB4DBIoxwQSL8N0lYRO/Oxts4nebYBO/2wRfrzJ+UqundPjjmsD/CPOXJu3q5zHAB8Q4IcSdz2aAPwrwieCn/B9+Bt4U9ImLQnva7P+0SL/9++kN5TbzuzPByBKAIQZI3sHzm+cllwEZQAZQ+5t7gVgDTHsdmzqebfZ3ZwE9gB4ADAAGAAOAAcAAYAAwwGO4+w3b099Yxhpg3Cnc0PE4G1g8+/UAyDZA8qaLKdfNyAAywByuygKT9irEGyBtG3baNnUZ4EITTDw06mxg+LMZ4NAMdDp4gAFOpOEr7gd40lvMugsimi5/GNkEps+up61hPPJXQGqQn7iA9difgWnBfurq5Ygl1zvruoMhxbPP2cBiE0zZsOJ7AaXCjzbAaTP4YkihGVq+GQQAAIBCojvdSUu3sQtYRO82wyJ6txkW4buNsInfXfo28btNsAjfXRI28buzwSZ+twk28btNEH8wZMK6fPIkWKkDn7ghIzEeK22wDTtxkmKzUgbYuAUrIU4R28Jb998ljHvf7er2zZd3X4GzzfzuTOCauHKOGsC++2uywMkyIAPIAGp/cy9wzADe+ee/Q4jIAGZ/Vnz0AHoAMAAYAAwABgADgAHAAGAAMAAY4DQWjbLic8wAFnmu5VS8HQ8vnv16AJw1QPLHnifN/pPlVgaQAbpqntr/YQOkfex5mvgjzwa2miBh3I6HP0j4xxwPP+FwF0RcE4+VPOgpRkiOwdf04OHmJtAaQXb89oRBEP8BPwOZIDNet4iirudMFMfDi8W/zQBMkBMPn4wpFT7KAG1m8NGoQjMoeQAAIIlvZvGYzJ3dqigAAAAASUVORK5CYII=" alt="Profile"></a>
 </nav></div></header>
 
 <main id="home">
