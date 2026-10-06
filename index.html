@@ -300,6 +300,42 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 }
 </style>
 
+
+<style id="coreofmines-desktop-menu-fix">
+/* Desktop/laptop: keep the hamburger menu visible at the far right. */
+@media (min-width:851px){
+  header .container.nav{
+    display:flex!important;
+    align-items:center!important;
+  }
+  .nav-links{
+    margin-left:auto!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:22px!important;
+  }
+  .nav-links .menu{
+    display:block!important;
+    width:34px!important;
+    height:28px!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  .nav-links > a{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .nav-links > a:last-child,
+  .nav-links .menu-link{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header><div class="container nav">
