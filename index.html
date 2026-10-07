@@ -393,6 +393,67 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 }
 </style>
 
+
+<style id="coreofmines-desktop-menu-fix">
+/* Keep the profile and hamburger controls visible on every screen size. */
+.nav-links{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;height:100%!important;flex:0 0 auto!important}
+.nav-links>a{display:flex!important;align-items:center!important;justify-content:center!important}
+.nav-links>a:first-child{width:46px!important;height:46px!important}
+.nav-links>a:first-child .menu{display:block!important;width:31px!important;height:27px!important;color:#b8c1d0!important}
+.profile-btn{display:flex!important;width:46px!important;height:46px!important;min-width:46px!important}
+.profile-btn img{display:block!important;width:30px!important;height:30px!important}
+@media(max-width:850px){
+  .nav-links{gap:5px!important}
+  .nav-links>a:first-child{width:39px!important;height:46px!important}
+  .nav-links>a:first-child .menu{display:block!important;width:29px!important;height:25px!important}
+  .profile-btn{width:39px!important;height:46px!important;min-width:39px!important}
+}
+@media(max-width:430px){
+  .nav-links>a:first-child{width:36px!important}
+  .nav-links>a:first-child .menu{width:27px!important;height:24px!important}
+  .profile-btn{width:36px!important;min-width:36px!important}
+  .profile-btn img{width:26px!important;height:26px!important}
+}
+</style>
+
+
+<style id="coreofmines-working-controls">
+/* Header actions */
+.nav-links>a:first-child{order:2;cursor:pointer}
+.nav-links>.profile-btn{order:1;cursor:pointer}
+
+/* Menu drawer */
+.menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);z-index:80;opacity:0;visibility:hidden;transition:.2s}
+.menu-backdrop.open{opacity:1;visibility:visible}
+.menu-panel{position:fixed;top:0;right:0;height:100dvh;width:min(330px,86vw);background:#080d11;border-left:1px solid #26313b;z-index:81;transform:translateX(100%);transition:transform .24s ease;padding:28px 22px;box-shadow:-20px 0 50px rgba(0,0,0,.35)}
+.menu-panel.open{transform:translateX(0)}
+.menu-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.menu-panel-title{font-family:"Playfair Display",serif;font-size:28px;color:var(--white)}
+.menu-close{border:0;background:transparent;color:#b8c1d0;font-size:32px;line-height:1;cursor:pointer;padding:4px 8px}
+.menu-item{width:100%;display:flex;align-items:center;justify-content:space-between;margin:10px 0;padding:15px 16px;border:1px solid #26313b;border-radius:12px;background:#0b1218;color:var(--white);cursor:pointer;text-align:left}
+.menu-item span:last-child{color:var(--gold);font-size:20px}
+.menu-user{font-size:13px;color:var(--muted);margin:-14px 0 18px}
+
+/* Login / sign-up modal */
+.auth-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:90;display:none;align-items:center;justify-content:center;padding:20px}
+.auth-backdrop.open{display:flex}
+.auth-card{width:min(430px,100%);background:#0a1117;border:1px solid #2a3742;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.auth-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.auth-title{font-family:"Playfair Display",serif;font-size:30px;color:var(--white);margin:0}
+.auth-close{border:0;background:transparent;color:#aeb8c8;font-size:30px;cursor:pointer}
+.auth-tabs{display:flex;gap:8px;margin-bottom:18px}
+.auth-tab{flex:1;padding:10px;border:1px solid #2a3742;border-radius:10px;background:transparent;color:#aeb8c8;cursor:pointer}
+.auth-tab.active{background:var(--gold);border-color:var(--gold);color:#111;font-weight:700}
+.auth-form label{display:block;color:#aeb8c8;font-size:12px;margin:12px 0 6px}
+.auth-form input{width:100%;padding:12px 13px;border:1px solid #2a3742;border-radius:10px;background:#080d11;color:#fff;outline:none}
+.auth-form input:focus{border-color:var(--gold)}
+.auth-submit{width:100%;margin-top:18px;padding:12px;border:0;border-radius:10px;background:var(--gold);color:#111;font-weight:800;cursor:pointer}
+.auth-message{min-height:18px;margin-top:12px;color:#aeb8c8;font-size:13px;line-height:1.45}
+.auth-message.error{color:#ffb4a2}
+.auth-note{margin-top:12px;color:#778392;font-size:11px;line-height:1.45}
+body.modal-open{overflow:hidden}
+</style>
+
 </head>
 <body>
 <header><div class="container nav">
@@ -401,6 +462,28 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 <a href="#menu" aria-label="Menu"><svg class="menu" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h24M2 12h24M2 21h24"/></svg></a>
 <a class="login-btn profile-btn" href="#login" aria-label="Login or Sign Up" title="Login / Sign Up"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACq0lEQVR42u3di3XDMAxD0Uin+6+crtCPYsPEfQPUFQGRjPXx6wUAAAAAAABgPqtpsO/3+/3jwKy1GKBM9EYzLKJ3m2ERvtsIm/jPeB4DBIoxwQSL8N0lYRO/Oxts4nebYBO/2wRfrzJ+UqundPjjmsD/CPOXJu3q5zHAB8Q4IcSdz2aAPwrwieCn/B9+Bt4U9ImLQnva7P+0SL/9++kN5TbzuzPByBKAIQZI3sHzm+cllwEZQAZQ+5t7gVgDTHsdmzqebfZ3ZwE9gB4ADAAGAAOAAcAAYAAwwGO4+w3b099Yxhpg3Cnc0PE4G1g8+/UAyDZA8qaLKdfNyAAywByuygKT9irEGyBtG3baNnUZ4EITTDw06mxg+LMZ4NAMdDp4gAFOpOEr7gd40lvMugsimi5/GNkEps+up61hPPJXQGqQn7iA9difgWnBfurq5Ygl1zvruoMhxbPP2cBiE0zZsOJ7AaXCjzbAaTP4YkihGVq+GQQAAIBCojvdSUu3sQtYRO82wyJ6txkW4buNsInfXfo28btNsAjfXRI28buzwSZ+twk28btNEH8wZMK6fPIkWKkDn7ghIzEeK22wDTtxkmKzUgbYuAUrIU4R28Jb998ljHvf7er2zZd3X4GzzfzuTOCauHKOGsC++2uywMkyIAPIAGp/cy9wzADe+ee/Q4jIAGZ/Vnz0AHoAMAAYAAwABgADgAHAAGAAMAAY4DQWjbLic8wAFnmu5VS8HQ8vnv16AJw1QPLHnifN/pPlVgaQAbpqntr/YQOkfex5mvgjzwa2miBh3I6HP0j4xxwPP+FwF0RcE4+VPOgpRkiOwdf04OHmJtAaQXb89oRBEP8BPwOZIDNet4iirudMFMfDi8W/zQBMkBMPn4wpFT7KAG1m8NGoQjMoeQAAIIlvZvGYzJ3dqigAAAAASUVORK5CYII=" alt="Profile"></a>
 </nav></div></header>
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<aside class="menu-panel" id="menuPanel" aria-hidden="true">
+  <div class="menu-panel-head"><div class="menu-panel-title">Menu</div><button class="menu-close" id="menuClose" aria-label="Close menu">×</button></div>
+  <div class="menu-user" id="menuUser">Explore CoreOfMines</div>
+  <button class="menu-item" id="menuLibrary" type="button"><span>Library</span><span>→</span></button>
+  <button class="menu-item" id="menuCategories" type="button"><span>Categories</span><span>→</span></button>
+</aside>
+
+<div class="auth-backdrop" id="authBackdrop">
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-head"><h2 class="auth-title" id="authTitle">Welcome Back</h2><button class="auth-close" id="authClose" aria-label="Close">×</button></div>
+    <div class="auth-tabs"><button class="auth-tab active" id="loginTab" type="button">Login</button><button class="auth-tab" id="signupTab" type="button">Sign Up</button></div>
+    <form class="auth-form" id="authForm">
+      <label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+      <label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
+      <button class="auth-submit" id="authSubmit" type="submit">Login</button>
+      <div class="auth-message" id="authMessage"></div>
+      <div class="auth-note">Your account is handled securely by Supabase. Never enter an admin/service-role key here.</div>
+    </form>
+  </div>
+</div>
+
 
 <main id="home">
 <section class="hero"><div class="container hero-content">
@@ -543,5 +626,80 @@ async function loadBooks(){
 
 loadBooks();
 </script>
+
+<script id="coreofmines-working-controls-js">
+const menuPanel=document.getElementById('menuPanel');
+const menuBackdrop=document.getElementById('menuBackdrop');
+const menuClose=document.getElementById('menuClose');
+const menuButton=document.querySelector('.nav-links>a:first-child');
+const menuLibrary=document.getElementById('menuLibrary');
+const menuCategories=document.getElementById('menuCategories');
+const menuUser=document.getElementById('menuUser');
+const profileButton=document.querySelector('.profile-btn');
+const authBackdrop=document.getElementById('authBackdrop');
+const authClose=document.getElementById('authClose');
+const authForm=document.getElementById('authForm');
+const authEmail=document.getElementById('authEmail');
+const authPassword=document.getElementById('authPassword');
+const authSubmit=document.getElementById('authSubmit');
+const authMessage=document.getElementById('authMessage');
+const loginTab=document.getElementById('loginTab');
+const signupTab=document.getElementById('signupTab');
+const authTitle=document.getElementById('authTitle');
+let authMode='login';
+
+function openMenu(){
+  menuPanel.classList.add('open'); menuBackdrop.classList.add('open'); menuPanel.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open');
+}
+function closeMenu(){
+  menuPanel.classList.remove('open'); menuBackdrop.classList.remove('open'); menuPanel.setAttribute('aria-hidden','true'); document.body.classList.remove('modal-open');
+}
+menuButton.addEventListener('click',e=>{e.preventDefault();openMenu()});
+menuClose.addEventListener('click',closeMenu);
+menuBackdrop.addEventListener('click',closeMenu);
+menuLibrary.addEventListener('click',()=>{closeMenu();document.getElementById('library').scrollIntoView({behavior:'smooth',block:'start'})});
+menuCategories.addEventListener('click',()=>{closeMenu();document.getElementById('categories').scrollIntoView({behavior:'smooth',block:'start'})});
+
+function setAuthMode(mode){
+  authMode=mode;
+  const signup=mode==='signup';
+  loginTab.classList.toggle('active',!signup); signupTab.classList.toggle('active',signup);
+  authTitle.textContent=signup?'Create Your Account':'Welcome Back';
+  authSubmit.textContent=signup?'Sign Up':'Login';
+  authPassword.autocomplete=signup?'new-password':'current-password';
+  authMessage.textContent=''; authMessage.classList.remove('error');
+}
+function openAuth(){authBackdrop.classList.add('open');document.body.classList.add('modal-open');authMessage.textContent='';setTimeout(()=>authEmail.focus(),50)}
+function closeAuth(){authBackdrop.classList.remove('open');document.body.classList.remove('modal-open')}
+profileButton.addEventListener('click',e=>{e.preventDefault();openAuth()});
+authClose.addEventListener('click',closeAuth);
+authBackdrop.addEventListener('click',e=>{if(e.target===authBackdrop)closeAuth()});
+loginTab.addEventListener('click',()=>setAuthMode('login')); signupTab.addEventListener('click',()=>setAuthMode('signup'));
+
+function updateAccountUI(session){
+  if(!session){menuUser.textContent='Explore CoreOfMines';return;}
+  menuUser.textContent='Signed in as '+(session.user.email||'your account');
+}
+if(supabaseClient){
+  supabaseClient.auth.getSession().then(({data})=>updateAccountUI(data.session));
+  supabaseClient.auth.onAuthStateChange((_event,session)=>updateAccountUI(session));
+}
+
+authForm.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!supabaseClient){authMessage.textContent='Login is temporarily unavailable.';authMessage.classList.add('error');return;}
+  authSubmit.disabled=true;authSubmit.textContent=authMode==='signup'?'Creating...':'Logging in...';authMessage.textContent='';authMessage.classList.remove('error');
+  const email=authEmail.value.trim();const password=authPassword.value;
+  let result;
+  if(authMode==='signup'){result=await supabaseClient.auth.signUp({email,password});}
+  else{result=await supabaseClient.auth.signInWithPassword({email,password});}
+  authSubmit.disabled=false;authSubmit.textContent=authMode==='signup'?'Sign Up':'Login';
+  if(result.error){authMessage.textContent=result.error.message;authMessage.classList.add('error');return;}
+  if(authMode==='signup' && !result.data.session){authMessage.textContent='Account created. Please check your email to confirm your account, then login.';return;}
+  authMessage.textContent='✓ Login successful.';
+  setTimeout(closeAuth,500);
+});
+</script>
+
 </body>
 </html>
