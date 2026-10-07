@@ -454,6 +454,17 @@ h1{font-family:"Playfair Display",serif;font-size:80px;line-height:1.08;letter-s
 body.modal-open{overflow:hidden}
 </style>
 
+
+<style id="coreofmines-user-features-css">
+.google-auth{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px solid #2a3742;border-radius:10px;background:#fff;color:#111;font-weight:700;cursor:pointer;margin:0 0 12px}
+.google-g{font-size:18px;font-weight:800;color:#4285f4}
+.auth-divider{display:flex;align-items:center;gap:10px;color:#66717f;font-size:12px;margin:8px 0 12px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#26313b;flex:1}
+.feedback-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:95;display:none;align-items:center;justify-content:center;padding:20px}.feedback-backdrop.open{display:flex}
+.feedback-card{width:min(430px,100%);background:#0a1117;border:1px solid #2a3742;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.feedback-intro{color:var(--muted);font-size:13px;margin:-4px 0 14px}.feedback-card textarea{width:100%;min-height:140px;resize:vertical;padding:12px 13px;border:1px solid #2a3742;border-radius:10px;background:#080d11;color:#fff;outline:none;font:inherit}.feedback-card textarea:focus{border-color:var(--gold)}
+.rating-wrap{margin-top:12px;padding-top:11px;border-top:1px solid #1e2932}.rating-line{display:flex;align-items:center;justify-content:space-between;gap:8px}.rating-stars{display:flex;gap:2px}.rating-star{border:0;background:transparent!important;color:#536170;padding:0!important;margin:0!important;font-size:22px;line-height:1;cursor:pointer}.rating-star.active,.rating-star.user-rated{color:var(--gold)}.rating-summary{color:#9eabbc;font-size:11px}.rating-hint{color:#667585;font-size:10px;margin-top:5px}.cover.clickable{cursor:pointer}.cover.clickable:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 0 rgba(243,189,78,0);transition:.2s;pointer-events:none}.cover.clickable:hover:after{box-shadow:inset 0 0 0 2px rgba(243,189,78,.55)}
+</style>
+
 </head>
 <body>
 <header><div class="container nav">
@@ -468,12 +479,16 @@ body.modal-open{overflow:hidden}
   <div class="menu-user" id="menuUser">Explore CoreOfMines</div>
   <button class="menu-item" id="menuLibrary" type="button"><span>Library</span><span>→</span></button>
   <button class="menu-item" id="menuCategories" type="button"><span>Categories</span><span>→</span></button>
+  <button class="menu-item" id="menuHelp" type="button"><span>Help</span><span>→</span></button>
+  <button class="menu-item" id="menuFeedback" type="button"><span>Feedback</span><span>→</span></button>
 </aside>
 
 <div class="auth-backdrop" id="authBackdrop">
   <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="auth-head"><h2 class="auth-title" id="authTitle">Welcome Back</h2><button class="auth-close" id="authClose" aria-label="Close">×</button></div>
     <div class="auth-tabs"><button class="auth-tab active" id="loginTab" type="button">Login</button><button class="auth-tab" id="signupTab" type="button">Sign Up</button></div>
+    <button class="google-auth" id="googleAuth" type="button"><span class="google-g">G</span> Continue with Google</button>
+    <div class="auth-divider"><span>or</span></div>
     <form class="auth-form" id="authForm">
       <label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
       <label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
@@ -484,6 +499,18 @@ body.modal-open{overflow:hidden}
   </div>
 </div>
 
+<div class="feedback-backdrop" id="feedbackBackdrop">
+  <div class="feedback-card" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+    <div class="auth-head"><h2 class="auth-title" id="feedbackTitle">Send Feedback</h2><button class="auth-close" id="feedbackClose" aria-label="Close">×</button></div>
+    <p class="feedback-intro">Tell us what you think about CoreOfMines.</p>
+    <form id="feedbackForm" class="auth-form">
+      <label for="feedbackText">Your feedback</label>
+      <textarea id="feedbackText" maxlength="2000" required placeholder="Write your feedback here..."></textarea>
+      <button class="auth-submit" id="feedbackSubmit" type="submit">Send Feedback</button>
+      <div class="auth-message" id="feedbackMessage"></div>
+    </form>
+  </div>
+</div>
 
 <main id="home">
 <section class="hero"><div class="container hero-content">
@@ -536,42 +563,78 @@ function renderBooks(books){
   books.forEach(book => {
     const card = document.createElement("article");
     card.className = "card";
+    card.dataset.bookId = book.id || "";
     card.dataset.category = String(book.category || "other").toLowerCase();
-    card.dataset.search = [
-      book.title, book.author, book.description, book.category
-    ].filter(Boolean).join(" ").toLowerCase();
+    card.dataset.search = [book.title, book.author, book.description, book.category].filter(Boolean).join(" ").toLowerCase();
 
     const cover = document.createElement("div");
-    cover.className = "cover";
+    cover.className = "cover clickable";
+    cover.title = "Read this book";
     const img = document.createElement("img");
     img.src = book.cover_url || "";
     img.alt = escapeText(book.title);
     img.loading = "lazy";
     cover.appendChild(img);
+    cover.addEventListener("click",()=>openBook(book.pdf_url));
 
-    const title = document.createElement("div");
-    title.className = "book-title";
-    title.textContent = escapeText(book.title);
+    const title = document.createElement("div"); title.className="book-title"; title.textContent=escapeText(book.title);
+    const author = document.createElement("div"); author.className="author"; author.textContent=escapeText(book.author);
+    const desc = document.createElement("p"); desc.className="desc"; desc.textContent=escapeText(book.description || "A new story from CoreOfMines.");
+    const read = document.createElement("button"); read.className="read"; read.type="button"; read.textContent="▣  Read Now"; read.addEventListener("click",()=>openBook(book.pdf_url));
 
-    const author = document.createElement("div");
-    author.className = "author";
-    author.textContent = escapeText(book.author);
+    const rating = document.createElement("div"); rating.className="rating-wrap"; rating.dataset.ratingBookId=book.id || "";
+    const line=document.createElement("div"); line.className="rating-line";
+    const stars=document.createElement("div"); stars.className="rating-stars";
+    for(let i=1;i<=5;i++){
+      const star=document.createElement("button"); star.type="button"; star.className="rating-star"; star.textContent="★"; star.dataset.value=i; star.setAttribute("aria-label",`Rate ${i} stars`);
+      star.addEventListener("click",()=>rateBook(book.id,i)); stars.appendChild(star);
+    }
+    const summary=document.createElement("span"); summary.className="rating-summary"; summary.textContent="No ratings yet";
+    line.append(stars,summary);
+    const hint=document.createElement("div"); hint.className="rating-hint"; hint.textContent="Rate this book";
+    rating.append(line,hint);
 
-    const desc = document.createElement("p");
-    desc.className = "desc";
-    desc.textContent = escapeText(book.description || "A new story from CoreOfMines.");
-
-    const read = document.createElement("a");
-    read.className = "read";
-    read.href = book.pdf_url || "#";
-    read.target = "_blank";
-    read.rel = "noopener";
-    read.textContent = "▣  Read Now";
-
-    card.append(cover, title, author, desc, read);
+    card.append(cover,title,author,desc,read,rating);
     grid.appendChild(card);
   });
   applyFilter();
+  refreshRatingUI();
+} 
+
+function openBook(url){
+  if(!url) return;
+  window.open(url,"_blank","noopener");
+}
+
+const ratingStats = new Map();
+const myRatings = new Map();
+async function refreshRatingUI(){
+  if(!supabaseClient || !allBooks.length) return;
+  ratingStats.clear(); myRatings.clear();
+  const ids=allBooks.map(b=>b.id).filter(Boolean);
+  if(!ids.length) return;
+  const {data,error}=await supabaseClient.from("ratings").select("book_id,rating").in("book_id",ids);
+  if(error){console.warn("Ratings unavailable:",error.message);return;}
+  (data||[]).forEach(r=>{const key=r.book_id;if(!ratingStats.has(key)) ratingStats.set(key,[]);ratingStats.get(key).push(Number(r.rating));});
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(session){
+    const mine=await supabaseClient.from("ratings").select("book_id,rating").eq("user_id",session.user.id).in("book_id",ids);
+    if(!mine.error)(mine.data||[]).forEach(r=>myRatings.set(r.book_id,Number(r.rating)));
+  }
+  document.querySelectorAll("[data-rating-book-id]").forEach(wrap=>{
+    const id=wrap.dataset.ratingBookId; const vals=ratingStats.get(id)||[]; const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0; const mine=myRatings.get(id)||0;
+    const stars=[...wrap.querySelectorAll(".rating-star")]; stars.forEach(s=>{const n=Number(s.dataset.value);s.classList.toggle("active",avg>=n-.25);s.classList.toggle("user-rated",mine===n)});
+    wrap.querySelector(".rating-summary").textContent=vals.length?`${avg.toFixed(1)} / 5 · ${vals.length} rating${vals.length===1?"":"s"}`:"No ratings yet";
+    wrap.querySelector(".rating-hint").textContent=mine?`Your rating: ${mine}/5 · Tap a star to change`:"Rate this book";
+  });
+}
+async function rateBook(bookId,value){
+  if(!supabaseClient||!bookId) return;
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){openAuth();authMessage.textContent="Please login or sign up to rate a book.";return;}
+  const {error}=await supabaseClient.from("ratings").upsert({book_id:bookId,user_id:session.user.id,rating:value},{onConflict:"book_id,user_id"});
+  if(error){console.error(error);authMessage.textContent="Rating failed: "+error.message;authMessage.classList.add("error");openAuth();return;}
+  await refreshRatingUI();
 }
 
 function applyFilter(){
@@ -635,6 +698,8 @@ const menuButton=document.querySelector('.nav-links>a:first-child');
 const menuLibrary=document.getElementById('menuLibrary');
 const menuCategories=document.getElementById('menuCategories');
 const menuUser=document.getElementById('menuUser');
+const menuHelp=document.getElementById('menuHelp');
+const menuFeedback=document.getElementById('menuFeedback');
 const profileButton=document.querySelector('.profile-btn');
 const authBackdrop=document.getElementById('authBackdrop');
 const authClose=document.getElementById('authClose');
@@ -646,6 +711,13 @@ const authMessage=document.getElementById('authMessage');
 const loginTab=document.getElementById('loginTab');
 const signupTab=document.getElementById('signupTab');
 const authTitle=document.getElementById('authTitle');
+const googleAuth=document.getElementById('googleAuth');
+const feedbackBackdrop=document.getElementById('feedbackBackdrop');
+const feedbackClose=document.getElementById('feedbackClose');
+const feedbackForm=document.getElementById('feedbackForm');
+const feedbackText=document.getElementById('feedbackText');
+const feedbackSubmit=document.getElementById('feedbackSubmit');
+const feedbackMessage=document.getElementById('feedbackMessage');
 let authMode='login';
 
 function openMenu(){
@@ -659,6 +731,8 @@ menuClose.addEventListener('click',closeMenu);
 menuBackdrop.addEventListener('click',closeMenu);
 menuLibrary.addEventListener('click',()=>{closeMenu();document.getElementById('library').scrollIntoView({behavior:'smooth',block:'start'})});
 menuCategories.addEventListener('click',()=>{closeMenu();document.getElementById('categories').scrollIntoView({behavior:'smooth',block:'start'})});
+menuHelp.addEventListener('click',()=>{closeMenu();window.location.href='mailto:coreofmines@gmail.com?subject=CoreOfMines%20Help'});
+menuFeedback.addEventListener('click',()=>{closeMenu();openFeedback()});
 
 function setAuthMode(mode){
   authMode=mode;
@@ -682,8 +756,37 @@ function updateAccountUI(session){
 }
 if(supabaseClient){
   supabaseClient.auth.getSession().then(({data})=>updateAccountUI(data.session));
-  supabaseClient.auth.onAuthStateChange((_event,session)=>updateAccountUI(session));
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{updateAccountUI(session);setTimeout(refreshRatingUI,0);});
 }
+
+async function openFeedback(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){openAuth();authMessage.textContent="Please login or sign up before sending feedback.";return;}
+  feedbackBackdrop.classList.add('open');document.body.classList.add('modal-open');feedbackMessage.textContent='';feedbackMessage.classList.remove('error');feedbackText.focus();
+}
+function closeFeedback(){feedbackBackdrop.classList.remove('open');document.body.classList.remove('modal-open');}
+feedbackClose.addEventListener('click',closeFeedback);
+feedbackBackdrop.addEventListener('click',e=>{if(e.target===feedbackBackdrop)closeFeedback()});
+
+if(googleAuth){googleAuth.addEventListener('click',async()=>{
+  if(!supabaseClient){authMessage.textContent='Login is temporarily unavailable.';authMessage.classList.add('error');return;}
+  googleAuth.disabled=true;googleAuth.textContent='Connecting…';
+  const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
+  if(error){googleAuth.disabled=false;googleAuth.innerHTML='<span class="google-g">G</span> Continue with Google';authMessage.textContent=error.message;authMessage.classList.add('error');}
+});}
+
+feedbackForm.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){closeFeedback();openAuth();return;}
+  const message=feedbackText.value.trim(); if(!message)return;
+  feedbackSubmit.disabled=true;feedbackSubmit.textContent='Sending…';
+  const {error}=await supabaseClient.from('feedback').insert({user_id:session.user.id,email:session.user.email||'',message});
+  feedbackSubmit.disabled=false;feedbackSubmit.textContent='Send Feedback';
+  if(error){feedbackMessage.textContent=error.message;feedbackMessage.classList.add('error');return;}
+  feedbackText.value='';feedbackMessage.textContent='✓ Thanks! Your feedback has been sent.';feedbackMessage.classList.remove('error');
+  setTimeout(closeFeedback,900);
+});
 
 authForm.addEventListener('submit',async e=>{
   e.preventDefault();
