@@ -477,6 +477,11 @@ body.modal-open{overflow:hidden}
 .profile-action{width:100%;padding:12px;border-radius:10px;border:1px solid #2a3742;background:transparent;color:var(--white);font-weight:700;cursor:pointer}.profile-action:hover{border-color:var(--gold);color:var(--gold)}
 </style>
 
+
+<style id="coreofmines-profile-step3">
+.profile-settings{display:grid;gap:10px;margin:4px 0 14px}.profile-label{color:#aeb8c8;font-size:12px;font-weight:700}.profile-username-row{display:flex;gap:8px}.profile-username-row input{min-width:0;flex:1;padding:11px 12px;border:1px solid #2a3742;border-radius:10px;background:#080d11;color:#fff;outline:none}.profile-username-row input:focus{border-color:var(--gold)}.profile-save{padding:11px 14px;border-radius:10px;border:1px solid var(--gold);background:var(--gold);color:#111;font-weight:800;cursor:pointer}.profile-save:disabled{opacity:.6;cursor:not-allowed}.profile-status{min-height:16px;color:#91a0b2;font-size:11px}.profile-status.success{color:#9bd59b}.profile-status.error{color:#ffb4a2}.profile-actions{display:grid;gap:8px;margin-top:8px}.profile-action.history{background:#101820}.profile-action.logout{border-color:#5b3030;color:#ffb4a2}.profile-action.logout:hover{border-color:#ff7b6b;color:#ff7b6b}
+</style>
+
 </head>
 <body>
 <header><div class="container nav">
@@ -519,7 +524,18 @@ body.modal-open{overflow:hidden}
       <div class="profile-stat"><b id="profileRatingCount">0</b><span>Ratings given</span></div>
       <div class="profile-stat"><b id="profileMemberSince">—</b><span>Member since</span></div>
     </div>
-    <button class="profile-action" id="profileLogout" type="button">Log Out</button>
+    <div class="profile-settings">
+      <label class="profile-label" for="profileUsername">Username</label>
+      <div class="profile-username-row">
+        <input id="profileUsername" type="text" maxlength="30" placeholder="Choose a username">
+        <button class="profile-save" id="profileUsernameSave" type="button">Save</button>
+      </div>
+      <div class="profile-status" id="profileUsernameStatus"></div>
+    </div>
+    <div class="profile-actions">
+      <button class="profile-action history" id="profileHistory" type="button">Reading History</button>
+      <button class="profile-action logout" id="profileLogout" type="button">Log Out</button>
+    </div>
   </div>
 </div>
 
@@ -764,6 +780,10 @@ const profileHero=document.getElementById('profileHero');
 const profileRatingCount=document.getElementById('profileRatingCount');
 const profileMemberSince=document.getElementById('profileMemberSince');
 const profileLogout=document.getElementById('profileLogout');
+const profileUsername=document.getElementById('profileUsername');
+const profileUsernameSave=document.getElementById('profileUsernameSave');
+const profileUsernameStatus=document.getElementById('profileUsernameStatus');
+const profileHistory=document.getElementById('profileHistory');
 const feedbackBackdrop=document.getElementById('feedbackBackdrop');
 const feedbackClose=document.getElementById('feedbackClose');
 const feedbackForm=document.getElementById('feedbackForm');
@@ -821,7 +841,7 @@ function updateProfileButton(session){
   profileButton.title='My Profile';
   menuUser.textContent='Signed in as '+(user.email||'your account');
 }
-function openProfile(){
+async function openProfile(){
   if(!currentSession){openAuth();return;}
   const user=currentSession.user;
   const name=user.user_metadata?.full_name || user.user_metadata?.name || 'CoreOfMines Reader';
@@ -830,14 +850,40 @@ function openProfile(){
   profileHero.innerHTML=avatar ? `<img class="profile-avatar" src="${escapeText(avatar)}" alt="Profile photo"><div class="profile-name">${escapeText(name)}</div><div class="profile-email">${escapeText(email)}</div>` : `<div class="profile-initial">${initialsFor(user)}</div><div class="profile-name">${escapeText(name)}</div><div class="profile-email">${escapeText(email)}</div>`;
   profileMemberSince.textContent=user.created_at ? new Date(user.created_at).toLocaleDateString(undefined,{month:'short',year:'numeric'}) : '—';
   profileRatingCount.textContent='…';
+  profileUsername.value='';
+  profileUsernameStatus.textContent='';
+  profileUsernameStatus.className='profile-status';
   if(supabaseClient){
-    supabaseClient.from('ratings').select('id',{count:'exact',head:true}).eq('user_id',user.id).then(({count})=>{profileRatingCount.textContent=String(count||0)});
+    const [ratings,profile] = await Promise.all([
+      supabaseClient.from('ratings').select('id',{count:'exact',head:true}).eq('user_id',user.id),
+      supabaseClient.from('profiles').select('username,email').eq('user_id',user.id).maybeSingle()
+    ]);
+    profileRatingCount.textContent=String(ratings.count||0);
+    if(!profile.error && profile.data?.username) profileUsername.value=profile.data.username;
   }
   profileBackdrop.classList.add('open');document.body.classList.add('modal-open');
 }
 function closeProfile(){profileBackdrop.classList.remove('open');document.body.classList.remove('modal-open');}
 profileClose.addEventListener('click',closeProfile);
 profileBackdrop.addEventListener('click',e=>{if(e.target===profileBackdrop)closeProfile()});
+profileUsernameSave.addEventListener('click',async()=>{
+  if(!supabaseClient||!currentSession)return;
+  const username=profileUsername.value.trim();
+  profileUsernameStatus.textContent='';
+  profileUsernameStatus.className='profile-status';
+  if(username.length<2){profileUsernameStatus.textContent='Username must be at least 2 characters.';profileUsernameStatus.classList.add('error');return;}
+  profileUsernameSave.disabled=true;profileUsernameSave.textContent='Saving…';
+  const {error}=await supabaseClient.from('profiles').upsert({user_id:currentSession.user.id,email:currentSession.user.email||'',username,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  profileUsernameSave.disabled=false;profileUsernameSave.textContent='Save';
+  if(error){profileUsernameStatus.textContent=error.message;profileUsernameStatus.classList.add('error');return;}
+  profileUsernameStatus.textContent='✓ Username saved';profileUsernameStatus.classList.add('success');
+  const nameEl=profileHero.querySelector('.profile-name');if(nameEl)nameEl.textContent=username;
+});
+
+profileHistory.addEventListener('click',()=>{
+  alert('Reading History will be connected in the next step.');
+});
+
 profileLogout.addEventListener('click',async()=>{if(supabaseClient) await supabaseClient.auth.signOut();closeProfile();window.scrollTo({top:0,behavior:'smooth'});});
 function updateAccountUI(session){
   currentSession=session||null;
