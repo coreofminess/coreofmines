@@ -229,6 +229,69 @@ async function loadFeedback(){
   data.forEach(f=>{const item=document.createElement("div");item.className="feedback-item";const meta=document.createElement("div");meta.className="feedback-meta";meta.textContent=(f.email||"No email")+" • "+new Date(f.created_at).toLocaleString();const text=document.createElement("div");text.className="feedback-text";text.textContent=f.message||"";item.append(meta,text);feedbackList.appendChild(item);});
 }
 
+function storagePathFromPublicUrl(url,bucket){
+  if(!url) return null;
+  const marker="/storage/v1/object/public/"+bucket+"/";
+  const i=url.indexOf(marker);
+  return i>=0 ? decodeURIComponent(url.slice(i+marker.length).split("?")[0]) : null;
+}
+
+async function changeCover(book,btn){
+  const input=document.createElement("input");
+  input.type="file"; input.accept="image/*";
+  input.onchange=async()=>{
+    const file=input.files&&input.files[0];
+    if(!file) return;
+    if(!file.type.startsWith("image/")){message(manageMsg,"Please select an image file.",true);return;}
+    btn.disabled=true; btn.textContent="Uploading…";
+    try{
+      const {data:{session}}=await supabaseClient.auth.getSession();
+      if(!session) throw new Error("Please login first.");
+      const newPath=crypto.randomUUID()+"-"+safeName(file.name);
+      const upload=await supabaseClient.storage.from("covers").upload(newPath,file,{upsert:false,contentType:file.type});
+      if(upload.error) throw new Error("Cover upload failed: "+upload.error.message);
+      const {data:publicData}=supabaseClient.storage.from("covers").getPublicUrl(newPath);
+      const oldPath=storagePathFromPublicUrl(book.cover_url,"covers");
+      const update=await supabaseClient.from("books").update({cover_url:publicData.publicUrl}).eq("id",book.id);
+      if(update.error){
+        await supabaseClient.storage.from("covers").remove([newPath]);
+        throw new Error("Book update failed: "+update.error.message);
+      }
+      if(oldPath){
+        const removeOld=await supabaseClient.storage.from("covers").remove([oldPath]);
+        if(removeOld.error) console.warn("Old cover could not be removed:",removeOld.error.message);
+      }
+      message(manageMsg,"✓ Cover replaced successfully.");
+      await loadBooks();
+    }catch(error){
+      message(manageMsg,error.message||"Could not replace cover.",true);
+      btn.disabled=false; btn.textContent="Change Cover 🖼️";
+    }
+  };
+  input.click();
+}
+
+async function deleteBook(book,btn){
+  if(!confirm('Delete "'+(book.title||"this book")+'"?\n\nThis will permanently remove the book, cover and PDF.')) return;
+  btn.disabled=true; btn.textContent="Deleting…";
+  try{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session) throw new Error("Please login first.");
+    const coverPath=storagePathFromPublicUrl(book.cover_url,"covers");
+    const pdfPath=storagePathFromPublicUrl(book.pdf_url,"books");
+    const del=await supabaseClient.from("books").delete().eq("id",book.id);
+    if(del.error) throw new Error("Database delete failed: "+del.error.message);
+    const errors=[];
+    if(coverPath){const r=await supabaseClient.storage.from("covers").remove([coverPath]);if(r.error) errors.push("cover: "+r.error.message);}
+    if(pdfPath){const r=await supabaseClient.storage.from("books").remove([pdfPath]);if(r.error) errors.push("PDF: "+r.error.message);}
+    message(manageMsg,errors.length?"✓ Book removed, but storage cleanup had an issue — "+errors.join("; "):"✓ Book, cover and PDF deleted successfully.",errors.length>0);
+    await loadBooks();
+  }catch(error){
+    message(manageMsg,error.message||"Could not delete book.",true);
+    btn.disabled=false; btn.textContent="Delete 🗑️";
+  }
+}
+
 refreshBooksBtn.addEventListener("click",loadBooks);
 
 document.getElementById("seePublishedBtn").addEventListener("click",async()=>{publishedPanel.classList.remove("hidden");manageBooksPanel.classList.add("hidden");feedbackPanel.classList.add("hidden");await loadPublishedBooks();});
