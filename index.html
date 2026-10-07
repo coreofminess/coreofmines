@@ -892,19 +892,48 @@ function updateAccountUI(session){
 async function syncAuthUI(){
   if(!supabaseClient) return;
   try{
-    const {data,error}=await supabaseClient.auth.getSession();
-    if(error){console.warn('Auth session error:',error.message);return;}
-    updateAccountUI(data?.session || null);
+    // First ask Supabase for the persisted session.
+    let {data,error}=await supabaseClient.auth.getSession();
+    if(error) console.warn('Auth session error:',error.message);
+    let session=data?.session || null;
+
+    // After Google redirects back, getUser() can see the authenticated user
+    // even when the first getSession() call is still catching up.
+    if(!session){
+      try{
+        const userResult=await supabaseClient.auth.getUser();
+        if(userResult?.data?.user){
+          const fresh=await supabaseClient.auth.getSession();
+          session=fresh?.data?.session || null;
+        }
+      }catch(userErr){console.warn('Auth user check failed:',userErr);}
+    }
+
+    updateAccountUI(session);
   }catch(err){console.warn('Auth UI sync failed:',err);}
 }
 
 if(supabaseClient){
-  // Sync immediately and retry after OAuth redirects, because the Google
-  // session can become available just after the page first renders.
-  syncAuthUI();
+  // Handle the OAuth code explicitly when Google returns to this page.
+  // Supabase normally does this automatically, but this makes the UI reliable
+  // on GitHub Pages after the OAuth redirect.
+  (async()=>{
+    try{
+      const params=new URLSearchParams(window.location.search);
+      const code=params.get('code');
+      if(code){
+        const {error}=await supabaseClient.auth.exchangeCodeForSession(code);
+        if(error) console.warn('OAuth code exchange:',error.message);
+        window.history.replaceState({},document.title,window.location.pathname+window.location.hash);
+      }
+    }catch(err){console.warn('OAuth redirect handling failed:',err);}
+    await syncAuthUI();
+  })();
+
   setTimeout(syncAuthUI,300);
   setTimeout(syncAuthUI,1000);
   setTimeout(syncAuthUI,2000);
+  setTimeout(syncAuthUI,4000);
   supabaseClient.auth.onAuthStateChange((_event,session)=>{
     updateAccountUI(session || null);
     setTimeout(syncAuthUI,100);
