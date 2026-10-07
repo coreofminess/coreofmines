@@ -457,12 +457,24 @@ body.modal-open{overflow:hidden}
 
 <style id="coreofmines-user-features-css">
 .google-auth{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px solid #2a3742;border-radius:10px;background:#fff;color:#111;font-weight:700;cursor:pointer;margin:0 0 12px}
-.google-g{font-size:18px;font-weight:800;color:#4285f4}
+.google-g{width:20px;height:20px;display:block;flex:0 0 20px}
 .auth-divider{display:flex;align-items:center;gap:10px;color:#66717f;font-size:12px;margin:8px 0 12px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#26313b;flex:1}
 .feedback-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:95;display:none;align-items:center;justify-content:center;padding:20px}.feedback-backdrop.open{display:flex}
 .feedback-card{width:min(430px,100%);background:#0a1117;border:1px solid #2a3742;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
 .feedback-intro{color:var(--muted);font-size:13px;margin:-4px 0 14px}.feedback-card textarea{width:100%;min-height:140px;resize:vertical;padding:12px 13px;border:1px solid #2a3742;border-radius:10px;background:#080d11;color:#fff;outline:none;font:inherit}.feedback-card textarea:focus{border-color:var(--gold)}
 .rating-wrap{margin-top:12px;padding-top:11px;border-top:1px solid #1e2932}.rating-line{display:flex;align-items:center;justify-content:space-between;gap:8px}.rating-stars{display:flex;gap:2px}.rating-star{border:0;background:transparent!important;color:#536170;padding:0!important;margin:0!important;font-size:22px;line-height:1;cursor:pointer}.rating-star.active,.rating-star.user-rated{color:var(--gold)}.rating-summary{color:#9eabbc;font-size:11px}.rating-hint{color:#667585;font-size:10px;margin-top:5px}.cover.clickable{cursor:pointer}.cover.clickable:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 0 rgba(243,189,78,0);transition:.2s;pointer-events:none}.cover.clickable:hover:after{box-shadow:inset 0 0 0 2px rgba(243,189,78,.55)}
+.profile-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #2a3742;background:#111a22}
+.profile-initial{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#18232d;color:var(--gold);font-weight:800;font-size:14px;border:2px solid #2a3742}
+.profile-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:96;display:none;align-items:center;justify-content:center;padding:20px}
+.profile-backdrop.open{display:flex}
+.profile-card{width:min(430px,100%);background:#0a1117;border:1px solid #2a3742;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.profile-hero{text-align:center;padding:4px 0 18px}
+.profile-hero .profile-avatar,.profile-hero .profile-initial{width:78px;height:78px;margin:0 auto 12px;font-size:28px}
+.profile-name{font-family:"Playfair Display",serif;font-size:25px;font-weight:700;color:var(--white)}
+.profile-email{color:var(--muted);font-size:13px;margin-top:4px;word-break:break-word}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:8px 0 16px}
+.profile-stat{background:#0b1218;border:1px solid #26313b;border-radius:12px;padding:12px}.profile-stat b{display:block;color:var(--white);font-size:16px}.profile-stat span{display:block;color:#778392;font-size:11px;margin-top:3px}
+.profile-action{width:100%;padding:12px;border-radius:10px;border:1px solid #2a3742;background:transparent;color:var(--white);font-weight:700;cursor:pointer}.profile-action:hover{border-color:var(--gold);color:var(--gold)}
 </style>
 
 </head>
@@ -487,7 +499,7 @@ body.modal-open{overflow:hidden}
   <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="auth-head"><h2 class="auth-title" id="authTitle">Welcome Back</h2><button class="auth-close" id="authClose" aria-label="Close">×</button></div>
     <div class="auth-tabs"><button class="auth-tab active" id="loginTab" type="button">Login</button><button class="auth-tab" id="signupTab" type="button">Sign Up</button></div>
-    <button class="google-auth" id="googleAuth" type="button"><span class="google-g">G</span> Continue with Google</button>
+    <button class="google-auth" id="googleAuth" type="button" aria-label="Continue with Google"><svg class="google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.35 1.53 7.82 2.82l5.72-5.58C34.05 3.08 29.47 1 24 1 14.6 1 6.55 6.4 2.66 14.28l6.72 5.22C11.3 13.24 17.06 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.62-.15-3.18-.43-4.68H24v9.02h12.58c-.54 2.9-2.18 5.36-4.65 7.01l7.13 5.54C43.22 37.17 46.5 31.43 46.5 24.5z"/><path fill="#FBBC05" d="M9.38 28.5A14.47 14.47 0 0 1 8.6 24c0-1.56.27-3.07.78-4.5l-6.72-5.22A23.94 23.94 0 0 0 0 24c0 3.86.92 7.52 2.66 10.72l6.72-5.22z"/><path fill="#34A853" d="M24 47c6.48 0 11.92-2.14 15.9-5.61l-7.13-5.54c-1.97 1.32-4.49 2.1-8.77 2.1-6.94 0-12.7-3.74-14.62-10l-6.72 5.22C6.55 41.6 14.6 47 24 47z"/></svg><span>Continue with Google</span></button>
     <div class="auth-divider"><span>or</span></div>
     <form class="auth-form" id="authForm">
       <label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
@@ -496,6 +508,18 @@ body.modal-open{overflow:hidden}
       <div class="auth-message" id="authMessage"></div>
       <div class="auth-note">Your account is handled securely by Supabase. Never enter an admin/service-role key here.</div>
     </form>
+  </div>
+</div>
+
+<div class="profile-backdrop" id="profileBackdrop">
+  <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="auth-head"><h2 class="auth-title" id="profileTitle">My Profile</h2><button class="auth-close" id="profileClose" aria-label="Close profile">×</button></div>
+    <div class="profile-hero" id="profileHero"></div>
+    <div class="profile-grid">
+      <div class="profile-stat"><b id="profileRatingCount">0</b><span>Ratings given</span></div>
+      <div class="profile-stat"><b id="profileMemberSince">—</b><span>Member since</span></div>
+    </div>
+    <button class="profile-action" id="profileLogout" type="button">Log Out</button>
   </div>
 </div>
 
@@ -688,9 +712,31 @@ async function loadBooks(){
 }
 
 loadBooks();
+
+// Static/demo book covers also open the same destination as their Read Now link.
+document.querySelectorAll('#bookGrid .card').forEach(card=>{
+  const cover=card.querySelector('.cover');
+  const link=card.querySelector('.read[href]');
+  if(cover && link){
+    cover.classList.add('clickable');
+    cover.title='Read this book';
+    cover.addEventListener('click',()=>window.open(link.href,'_blank','noopener'));
+  }
+});
 </script>
 
 <script id="coreofmines-working-controls-js">
+// OAuth always returns to the live CoreOfMines homepage, never to localhost.
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const hash=window.location.hash||'';
+  if(params.has('error') || params.has('error_code') || params.has('error_description')){
+    const desc=params.get('error_description');
+    if(desc && window.location.origin!==new URL('https://coreofminess.github.io/coreofmines/').origin){
+      window.location.replace('https://coreofminess.github.io/coreofmines/?error_description='+encodeURIComponent(desc));
+    }
+  }
+})();
 const menuPanel=document.getElementById('menuPanel');
 const menuBackdrop=document.getElementById('menuBackdrop');
 const menuClose=document.getElementById('menuClose');
@@ -712,6 +758,12 @@ const loginTab=document.getElementById('loginTab');
 const signupTab=document.getElementById('signupTab');
 const authTitle=document.getElementById('authTitle');
 const googleAuth=document.getElementById('googleAuth');
+const profileBackdrop=document.getElementById('profileBackdrop');
+const profileClose=document.getElementById('profileClose');
+const profileHero=document.getElementById('profileHero');
+const profileRatingCount=document.getElementById('profileRatingCount');
+const profileMemberSince=document.getElementById('profileMemberSince');
+const profileLogout=document.getElementById('profileLogout');
 const feedbackBackdrop=document.getElementById('feedbackBackdrop');
 const feedbackClose=document.getElementById('feedbackClose');
 const feedbackForm=document.getElementById('feedbackForm');
@@ -719,6 +771,8 @@ const feedbackText=document.getElementById('feedbackText');
 const feedbackSubmit=document.getElementById('feedbackSubmit');
 const feedbackMessage=document.getElementById('feedbackMessage');
 let authMode='login';
+const CANONICAL_HOME='https://coreofminess.github.io/coreofmines/';
+let currentSession=null;
 
 function openMenu(){
   menuPanel.classList.add('open'); menuBackdrop.classList.add('open'); menuPanel.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open');
@@ -743,57 +797,55 @@ function setAuthMode(mode){
   authPassword.autocomplete=signup?'new-password':'current-password';
   authMessage.textContent=''; authMessage.classList.remove('error');
 }
-function openAuth(){
-  authBackdrop.classList.add('open'); document.body.classList.add('modal-open');
-  if(window.currentAuthSession){
-    authTitle.textContent='Your Profile';
-    loginTab.style.display='none'; signupTab.style.display='none'; googleAuth.style.display='none'; document.querySelector('.auth-divider').style.display='none';
-    authForm.innerHTML=`<div style="text-align:center;padding:12px 0 6px"><div style="width:72px;height:72px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;background:linear-gradient(135deg,#d8a84e,#f3d28a);color:#17130b;font-size:25px;font-weight:800">${getInitials(window.currentAuthSession.user)}</div><div style="font-size:18px;font-weight:800">${escapeHtml(window.currentAuthSession.user.user_metadata?.full_name || 'CoreOfMines Reader')}</div><div style="font-size:13px;opacity:.65;margin-top:5px">${escapeHtml(window.currentAuthSession.user.email || '')}</div></div><button type="button" class="auth-submit" id="logoutBtn">Log Out</button><div class="auth-message" id="authMessage">You are signed in.</div>`;
-    document.getElementById('logoutBtn').addEventListener('click',async()=>{const {error}=await supabaseClient.auth.signOut();if(error){const m=document.getElementById('authMessage');m.textContent=error.message;m.classList.add('error');return;}closeAuth();});
-    return;
-  }
-  authTitle.textContent=authMode==='signup'?'Create Your Account':'Welcome Back';
-  loginTab.style.display=''; signupTab.style.display=''; googleAuth.style.display=''; document.querySelector('.auth-divider').style.display='';
-  authMessage.textContent=''; authMessage.classList.remove('error'); setTimeout(()=>authEmail.focus(),50);
-}
+function openAuth(){authBackdrop.classList.add('open');document.body.classList.add('modal-open');authMessage.textContent='';setTimeout(()=>authEmail.focus(),50)}
 function closeAuth(){authBackdrop.classList.remove('open');document.body.classList.remove('modal-open')}
-function escapeHtml(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function getInitials(user){const n=user?.user_metadata?.full_name||user?.email||'U';return n.split(/[\s@._-]+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('')||'U';}
-profileButton.addEventListener('click',e=>{
-  e.preventDefault();
-  if(window.currentAuthSession){openMenu();}
-  else openAuth();
-});
+profileButton.addEventListener('click',e=>{e.preventDefault(); currentSession ? openProfile() : openAuth()});
 authClose.addEventListener('click',closeAuth);
 authBackdrop.addEventListener('click',e=>{if(e.target===authBackdrop)closeAuth()});
 loginTab.addEventListener('click',()=>setAuthMode('login')); signupTab.addEventListener('click',()=>setAuthMode('signup'));
 
-window.currentAuthSession=null;
-function updateAccountUI(session){
-  window.currentAuthSession=session||null;
+function initialsFor(user){
+  const name=user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || 'U';
+  return name.trim().split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+}
+function updateProfileButton(session){
   if(!session){
-    profileButton.innerHTML='<span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.22);font-size:16px">♙</span>';
+    profileButton.innerHTML='<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACq0lEQVR42u3di3XDMAxD0Uin+6+crtCPYsPEfQPUFQGRjPXx6wUAAAAAAABgPqtpsO/3+/3jwKy1GKBM9EYzLKJ3m2ERvtsIm/jPeB4DBIoxwQSL8N0lYRO/Oxts4nebYBO/2wRfrzJ+UqundPjjmsD/CPOXJu3q5zHAB8Q4IcSdz2aAPwrwieCn/B9+Bt4U9ImLQnva7P+0SL/9++kN5TbzuzPByBKAIQZI3sHzm+cllwEZQAZQ+5t7gVgDTHsdmzqebfZ3ZwE9gB4ADAAGAAOAAcAAYAAwwGO4+w3b099Yxhpg3Cnc0PE4G1g8+/UAyDZA8qaLKdfNyAAywByuygKT9irEGyBtG3baNnUZ4EITTDw06mxg+LMZ4NAMdDp4gAFOpOEr7gd40lvMugsimi5/GNkEps+up61hPPJXQGqQn7iA9difgWnBfurq5Ygl1zvruoMhxbPP2cBiE0zZsOJ7AaXCjzbAaTP4YkihGVq+GQQAAIBCojvdSUu3sQtYRO82wyJ6txkW4buNsInfXfo28btNsAjfXRI28buzwSZ+twk28btNEH8wZMK6fPIkWKkDn7ghIzEeK22wDTtxkmKzUgbYuAUrIU4R28Jb998ljHvf7er2zZd3X4GzzfzuTOCauHKOGsC++2uywMkyIAPIAGp/cy9wzADe+ee/Q4jIAGZ/Vnz0AHoAMAAYAAwABgADgAHAAGAAMAAY4DQWjbLic8wAFnmu5VS8HQ8vnv16AJw1QPLHnifN/pPlVgaQAbpqntr/YQOkfex5mvgjzwa2miBh3I6HP0j4xxwPP+FwF0RcE4+VPOgpRkiOwdf04OHmJtAaQXb89oRBEP8BPwOZIDNet4iirudMFMfDi8W/zQBMkBMPn4wpFT7KAG1m8NGoQjMoeQAAIIlvZvGYzJ3dqigAAAAASUVORK5CYII=" alt="Profile">';
     profileButton.title='Login / Sign Up';
-    menuUser.innerHTML='Explore CoreOfMines';
+    menuUser.textContent='Explore CoreOfMines';
     return;
   }
-  const user=session.user;
-  const name=user.user_metadata?.full_name||user.user_metadata?.name||'CoreOfMines Reader';
-  const initials=getInitials(user);
-  profileButton.innerHTML='<span style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#d8a84e,#f3d28a);color:#17130b;font-weight:800;font-size:12px;box-shadow:0 0 0 2px rgba(255,255,255,.12)">'+initials+'</span>';
-  profileButton.title='Your Profile';
-  menuUser.innerHTML='<div style="font-weight:800">'+escapeHtml(name)+'</div><div style="font-size:12px;opacity:.6;margin-top:3px">'+escapeHtml(user.email||'')+'</div><button id="menuLogout" type="button" style="margin-top:12px;width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.05);color:inherit;cursor:pointer">Log Out</button>';
-  const logout=document.getElementById('menuLogout');
-  if(logout) logout.addEventListener('click',async()=>{
-    logout.disabled=true; logout.textContent='Logging out…';
-    const {error}=await supabaseClient.auth.signOut();
-    if(error){logout.disabled=false;logout.textContent='Log Out';alert(error.message);}
-    else closeMenu();
-  });
+  const user=session.user; currentSession=session;
+  const avatar=user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+  profileButton.innerHTML=avatar ? `<img class="profile-avatar" src="${escapeText(avatar)}" alt="Profile">` : `<span class="profile-initial">${initialsFor(user)}</span>`;
+  profileButton.title='My Profile';
+  menuUser.textContent='Signed in as '+(user.email||'your account');
+}
+function openProfile(){
+  if(!currentSession){openAuth();return;}
+  const user=currentSession.user;
+  const name=user.user_metadata?.full_name || user.user_metadata?.name || 'CoreOfMines Reader';
+  const email=user.email || '';
+  const avatar=user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+  profileHero.innerHTML=avatar ? `<img class="profile-avatar" src="${escapeText(avatar)}" alt="Profile photo"><div class="profile-name">${escapeText(name)}</div><div class="profile-email">${escapeText(email)}</div>` : `<div class="profile-initial">${initialsFor(user)}</div><div class="profile-name">${escapeText(name)}</div><div class="profile-email">${escapeText(email)}</div>`;
+  profileMemberSince.textContent=user.created_at ? new Date(user.created_at).toLocaleDateString(undefined,{month:'short',year:'numeric'}) : '—';
+  profileRatingCount.textContent='…';
+  if(supabaseClient){
+    supabaseClient.from('ratings').select('id',{count:'exact',head:true}).eq('user_id',user.id).then(({count})=>{profileRatingCount.textContent=String(count||0)});
+  }
+  profileBackdrop.classList.add('open');document.body.classList.add('modal-open');
+}
+function closeProfile(){profileBackdrop.classList.remove('open');document.body.classList.remove('modal-open');}
+profileClose.addEventListener('click',closeProfile);
+profileBackdrop.addEventListener('click',e=>{if(e.target===profileBackdrop)closeProfile()});
+profileLogout.addEventListener('click',async()=>{if(supabaseClient) await supabaseClient.auth.signOut();closeProfile();window.scrollTo({top:0,behavior:'smooth'});});
+function updateAccountUI(session){
+  currentSession=session||null;
+  updateProfileButton(session);
 }
 if(supabaseClient){
   supabaseClient.auth.getSession().then(({data})=>updateAccountUI(data.session));
-  supabaseClient.auth.onAuthStateChange((_event,session)=>{updateAccountUI(session);setTimeout(()=>{refreshRatingUI();},0);});
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{updateAccountUI(session);setTimeout(refreshRatingUI,0);});
 }
 
 async function openFeedback(){
@@ -807,9 +859,9 @@ feedbackBackdrop.addEventListener('click',e=>{if(e.target===feedbackBackdrop)clo
 
 if(googleAuth){googleAuth.addEventListener('click',async()=>{
   if(!supabaseClient){authMessage.textContent='Login is temporarily unavailable.';authMessage.classList.add('error');return;}
-  googleAuth.disabled=true;googleAuth.textContent='Connecting…';
-  const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
-  if(error){googleAuth.disabled=false;googleAuth.innerHTML='<span class="google-g">G</span> Continue with Google';authMessage.textContent=error.message;authMessage.classList.add('error');}
+  googleAuth.disabled=true;googleAuth.innerHTML='<span>Connecting…</span>';
+  const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:CANONICAL_HOME}});
+  if(error){googleAuth.disabled=false;googleAuth.innerHTML='<svg class="google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.35 1.53 7.82 2.82l5.72-5.58C34.05 3.08 29.47 1 24 1 14.6 1 6.55 6.4 2.66 14.28l6.72 5.22C11.3 13.24 17.06 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.62-.15-3.18-.43-4.68H24v9.02h12.58c-.54 2.9-2.18 5.36-4.65 7.01l7.13 5.54C43.22 37.17 46.5 31.43 46.5 24.5z"/><path fill="#FBBC05" d="M9.38 28.5A14.47 14.47 0 0 1 8.6 24c0-1.56.27-3.07.78-4.5l-6.72-5.22A23.94 23.94 0 0 0 0 24c0 3.86.92 7.52 2.66 10.72l6.72-5.22z"/><path fill="#34A853" d="M24 47c6.48 0 11.92-2.14 15.9-5.61l-7.13-5.54c-1.97 1.32-4.49 2.1-8.77 2.1-6.94 0-12.7-3.74-14.62-10l-6.72 5.22C6.55 41.6 14.6 47 24 47z"/></svg><span>Continue with Google</span>';authMessage.textContent=error.message;authMessage.classList.add('error');}
 });}
 
 feedbackForm.addEventListener('submit',async e=>{
@@ -838,7 +890,7 @@ authForm.addEventListener('submit',async e=>{
   if(authMode==='signup' && !result.data.session){authMessage.textContent='Account created. Please check your email to confirm your account, then login.';return;}
   updateAccountUI(result.data.session);
   authMessage.textContent=authMode==='signup'?'✓ Account created successfully.':'✓ Login successful.';
-  setTimeout(closeAuth,700);
+  setTimeout(closeAuth,500);
 });
 </script>
 
