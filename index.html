@@ -889,9 +889,29 @@ function updateAccountUI(session){
   currentSession=session||null;
   updateProfileButton(session);
 }
+async function syncAuthUI(){
+  if(!supabaseClient) return;
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error){console.warn('Auth session error:',error.message);return;}
+    updateAccountUI(data?.session || null);
+  }catch(err){console.warn('Auth UI sync failed:',err);}
+}
+
 if(supabaseClient){
-  supabaseClient.auth.getSession().then(({data})=>updateAccountUI(data.session));
-  supabaseClient.auth.onAuthStateChange((_event,session)=>{updateAccountUI(session);setTimeout(refreshRatingUI,0);});
+  // Sync immediately and retry after OAuth redirects, because the Google
+  // session can become available just after the page first renders.
+  syncAuthUI();
+  setTimeout(syncAuthUI,300);
+  setTimeout(syncAuthUI,1000);
+  setTimeout(syncAuthUI,2000);
+  supabaseClient.auth.onAuthStateChange((_event,session)=>{
+    updateAccountUI(session || null);
+    setTimeout(syncAuthUI,100);
+    setTimeout(refreshRatingUI,0);
+  });
+  window.addEventListener('pageshow',syncAuthUI);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden) syncAuthUI();});
 }
 
 async function openFeedback(){
